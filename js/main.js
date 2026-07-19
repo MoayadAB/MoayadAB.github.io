@@ -1,8 +1,8 @@
 ﻿document.addEventListener("DOMContentLoaded", function() {
 
     // Mobile menu toggle
-    const navToggle = document.getElementById("navToggle");
-    const navMenu = document.getElementById("navMenu");
+    var navToggle = document.getElementById("navToggle");
+    var navMenu = document.getElementById("navMenu");
 
     navToggle.addEventListener("click", function() {
         navMenu.classList.toggle("open");
@@ -18,7 +18,7 @@
     });
 
     // Navbar scroll effect
-    const navbar = document.getElementById("navbar");
+    var navbar = document.getElementById("navbar");
     window.addEventListener("scroll", function() {
         if (window.scrollY > 50) {
             navbar.classList.add("scrolled");
@@ -28,8 +28,8 @@
     });
 
     // Active nav link on scroll
-    const sections = document.querySelectorAll("section[id]");
-    const navLinks = document.querySelectorAll(".nav-link");
+    var sections = document.querySelectorAll("section[id]");
+    var navLinks = document.querySelectorAll(".nav-link");
 
     function updateActiveLink() {
         var scrollPos = window.scrollY + 120;
@@ -66,5 +66,68 @@
 
     window.addEventListener("scroll", revealOnScroll);
     revealOnScroll();
+
+    // Project modal
+    var modal = document.getElementById("projectModal");
+    var modalBackdrop = document.getElementById("modalBackdrop");
+    var modalClose = document.getElementById("modalClose");
+    var modalBadge = document.getElementById("modalBadge");
+    var modalTitle = document.getElementById("modalTitle");
+    var modalDesc = document.getElementById("modalDesc");
+    var modalTags = document.getElementById("modalTags");
+    var modalFooter = document.getElementById("modalFooter");
+
+    function openModal(card) {
+        modalBadge.textContent = card.getAttribute("data-project-badge");
+        modalTitle.textContent = card.getAttribute("data-project-title");
+        modalDesc.textContent = card.getAttribute("data-project-desc");
+
+        var tags = card.getAttribute("data-project-tags").split(",");
+        modalTags.innerHTML = "";
+        tags.forEach(function(tag) {
+            var span = document.createElement("span");
+            span.textContent = tag.trim();
+            modalTags.appendChild(span);
+        });
+
+        modalFooter.innerHTML = "";
+        var link = card.getAttribute("data-project-link");
+        if (link) {
+            var a = document.createElement("a");
+            a.href = link;
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            a.className = "modal-link";
+            a.innerHTML = 'View on GitHub <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>';
+            modalFooter.appendChild(a);
+        } else {
+            var p = document.createElement("p");
+            p.className = "modal-status";
+            p.textContent = "GitHub link coming soon";
+            modalFooter.appendChild(p);
+        }
+
+        modal.classList.add("active");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+        modal.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    document.querySelectorAll(".project-card").forEach(function(card) {
+        card.addEventListener("click", function() {
+            openModal(card);
+        });
+    });
+
+    modalClose.addEventListener("click", closeModal);
+    modalBackdrop.addEventListener("click", closeModal);
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape" && modal.classList.contains("active")) {
+            closeModal();
+        }
+    });
 
 });
